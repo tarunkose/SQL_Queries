@@ -1,0 +1,48 @@
+--Write a query to print all prime numbers less than or equal to 100. 
+--Print your result on a single line, and use the ampersand (&) character as your separator (instead of a space).
+
+SET QUOTED_IDENTIFIER ON
+GO
+DECLARE 
+    @MAX_NUM INT,
+    @NUM INT,
+    @A INT,
+    @TEMP INT,
+	@str varchar(8000)
+BEGIN
+    SET @MAX_NUM=1000
+    SET @NUM = 0
+
+    CREATE TABLE #TMP(
+    VAL  int)
+    INSERT INTO #TMP SELECT 2
+
+WHILE (@NUM <= @MAX_NUM)
+    BEGIN
+        SET @A=2
+        WHILE(@A < @NUM)
+            BEGIN
+                IF (@NUM%@A = 0)
+                    BEGIN
+                        SET @TEMP = 2
+                        BREAK;
+                    END
+                ELSE
+                    BEGIN
+                        SET @TEMP = @NUM
+                    END        
+                
+            SET @A = @A + 1
+            END
+        -- To insert values in tables
+        INSERT INTO #TMP
+        SELECT @TEMP WHERE @TEMP NOT IN (SELECT VAL FROM #TMP)  
+    
+        SET @NUM = @NUM + 1
+    END
+    -- formatting date in expected result output
+            set @str = STUFF((select  '&'+ cast(val as varchar) from #tmp FOR XML PATH, TYPE).value(N'.[1]', N'nvarchar(max)'),1, 1, N'');
+			print @str;
+    -- Dropping temp table just to make query re-executable
+   drop table #tmp
+END
