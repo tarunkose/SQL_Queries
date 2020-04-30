@@ -46,3 +46,13 @@ WHILE (@NUM <= @MAX_NUM)
     -- Dropping temp table just to make query re-executable
    drop table #tmp
 END
+
+
+-- Instead of For Clause we can use below statement 
+
+declare @v nvarchar(max)
+set @v = ''
+select @v = @v+CONCAT(cast(val as nvarchar) , '&') from #tmp
+select left(@V, LEN(@v)-1)
+OR
+select stuff(replace((select '&' + cast(val as nvarchar)from #tmp for xml path('')), 'amp;', ''),1,1,'')
