@@ -24,3 +24,12 @@ WHERE NOT EXISTS(   SELECT 1 FROM PRIME_NUM T2
 OPTION (MAXRECURSION 0)
 
 SELECT STUFF((SELECT '&'+CAST(VAL AS VARCHAR) FROM #TEMP FOR XML PATH(''),TYPE).value(N'.[1]', N'NVARCHAR(MAX)'), 1,1, '')
+
+-- Instead of For Clause we can use below statement 
+
+declare @v nvarchar(max)
+set @v = ''
+select @v = @v+CONCAT(cast(val as nvarchar) , '&') from #tmp
+select left(@V, LEN(@v)-1)
+OR
+select stuff(replace((select '&' + cast(val as nvarchar)from #tmp for xml path('')), 'amp;', ''),1,1,'')
